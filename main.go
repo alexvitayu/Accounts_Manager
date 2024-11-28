@@ -2,18 +2,35 @@ package main
 
 import "fmt"
 
-type myType = [4]int
-
-func main() {
-	trans := [4]int{1, 2, 3, 4}
-	fmt.Println(trans)
-	reverse(&trans)
-	fmt.Println(trans)
-
+type account struct {
+	url      string
+	login    string
+	password string
 }
 
-func reverse(array *myType) {
-	for index, value := range *array {
-		(*array)[len(*array)-1-index] = value
+func main() {
+
+	url := addInfo("введите url")
+	login := addInfo("введите логин")
+	password := addInfo("введите пароль")
+
+	account1 := account{
+		login:    login,
+		url:      url,
+		password: password,
 	}
+
+	outputInfo(&account1)
+}
+
+func addInfo(info string) string {
+	fmt.Print(info, ": ")
+	var num string
+	fmt.Scan(&num)
+	return num
+}
+
+func outputInfo(acc *account) {
+	fmt.Println(acc)
+	fmt.Println((*acc).url, acc.login, acc.password)
 }
