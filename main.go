@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand/v2"
+	"net/url"
 )
 
 type account struct {
@@ -11,49 +13,50 @@ type account struct {
 	password string
 }
 
+func (acc *account) outputInfo() {
+	fmt.Println((acc).url, (acc).login, (acc).password)
+}
+
+func (acc *account) generatePassword(n int) {
+	res := make([]rune, n)
+	for i := range res {
+		res[i] = letterRunes[rand.IntN(len(letterRunes))]
+	}
+	acc.password = string(res)
+}
+
+func newAccount(login, password, urlString string) (*account, error) {
+	_, err := url.ParseRequestURI(urlString)
+	if err != nil {
+		return nil, errors.New("INVALID_URL")
+	}
+	return &account{
+		url:      urlString,
+		login:    login,
+		password: password,
+	}, nil
+}
+
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!")
 
 func main() {
 
 	url := addInfo("введите url")
 	login := addInfo("введите логин")
-	fmt.Println("Вы хотите сгенерировать пароль? y/n:")
-	var userChoise string
-	var password string
-	fmt.Scan(&userChoise)
-	switch userChoise {
-	case "y":
-		password = generatePassword(8)
-	case "n":
-		password = addInfo("введите пароль")
+	password := addInfo("введите пароль")
+	account1, err := newAccount(login, password, url)
+	if err != nil {
+		fmt.Println("неверный формат URL")
+		return
 	}
+	account1.generatePassword(8)
 
-	account1 := account{
-		login:    login,
-		url:      url,
-		password: password,
-	}
-
-	outputInfo(&account1)
-
+	account1.outputInfo()
 }
 
-func addInfo(info string) string {
-	fmt.Print(info, ": ")
-	var num string
-	fmt.Scan(&num)
-	return num
-}
-
-func outputInfo(acc *account) {
-	fmt.Println(acc)
-	fmt.Println((*acc).url, acc.login, acc.password)
-}
-
-func generatePassword(n int) string {
-	res := make([]rune, n)
-	for i := range res {
-		res[i] = letterRunes[rand.IntN(len(letterRunes))]
-	}
-	return string(res)
+func addInfo(data string) string {
+	fmt.Print(data, ": ")
+	var info string
+	fmt.Scan(&info)
+	return info
 }
