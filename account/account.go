@@ -1,33 +1,42 @@
 package account
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand/v2"
 	"net/url"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!")
 
 // blueprint for struct
 type Account struct {
-	url      string
-	login    string
-	password string
-}
-
-// blueprint for composition struct
-type AccountWithTimeStamps struct {
-	createdAt time.Time
-	updatedAt time.Time
-	Account
+	Url       string    `json:"url"`
+	Login     string    `json:"login"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 // method struct
-func (acc *AccountWithTimeStamps) OutputInfo() {
-	fmt.Println(acc.url, acc.login, acc.password, acc.createdAt, (*acc).updatedAt)
+func (acc *Account) OutputInfo() {
+	color.Cyan(acc.Url)
+	color.Blue(acc.Login)
+	color.Green(acc.Password)
+	fmt.Println(acc.Url, acc.Login, acc.Password, acc.CreatedAt, (*acc).UpdatedAt)
 	fmt.Println(*acc)
+}
+
+func (acc *Account) ToBytes() ([]byte, error) {
+	file, err := json.Marshal(acc)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
 }
 
 // method struct
@@ -36,11 +45,11 @@ func (acc *Account) generatePassword(n int) {
 	for i := range res {
 		res[i] = letterRunes[rand.IntN(len(letterRunes))]
 	}
-	acc.password = string(res)
+	acc.Password = string(res)
 }
 
 // comosition struct
-func NewMyAccountWithTimeStamps(urlString, login, password string) (*AccountWithTimeStamps, error) {
+func NewMyAccount(urlString, login, password string) (*Account, error) {
 	if login == "" {
 		return nil, errors.New("INVALID_LOGIN")
 	}
@@ -48,17 +57,15 @@ func NewMyAccountWithTimeStamps(urlString, login, password string) (*AccountWith
 	if err != nil {
 		return nil, errors.New("INVALID_URL")
 	}
-	newAcc := &AccountWithTimeStamps{
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
-		Account: Account{
-			url:      urlString,
-			login:    login,
-			password: password,
-		},
+	newAcc := &Account{
+		Url:       urlString,
+		Login:     login,
+		Password:  password,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 	if password == "" {
-		newAcc.Account.generatePassword(4)
+		newAcc.generatePassword(12)
 	}
 	return newAcc, nil
 }
