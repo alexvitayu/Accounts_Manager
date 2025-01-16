@@ -2,12 +2,30 @@ package main
 
 import (
 	"demo/password-1/account"
-	"demo/password-1/files"
 	"fmt"
 )
 
 func main() {
-	createAccount()
+Menu:
+	for {
+		userChoise := selectMenu()
+		switch userChoise {
+		case 1:
+			createAccount()
+		case 2:
+			findAccount()
+		case 3:
+			deleteAccount()
+		default:
+			fmt.Println("вы действительно хотите выйти? y/n")
+			var ch string
+			fmt.Scan(&ch)
+			if ch == "y" {
+				break Menu
+			}
+		}
+	}
+
 }
 
 func createAccount() {
@@ -19,12 +37,8 @@ func createAccount() {
 		fmt.Println("неверный формат URL или логин")
 		return
 	}
-	file, err := myAccount.ToBytes()
-	if err != nil {
-		fmt.Println("Не удалось преобразовать в JSON")
-		return
-	}
-	files.WriteFile(file, "data.json")
+	myVault := account.NewVault()
+	myVault.AddAccount(*myAccount)
 }
 
 func addInfo(data string) string {
@@ -32,4 +46,23 @@ func addInfo(data string) string {
 	var info string
 	fmt.Scanln(&info)
 	return info
+}
+
+func selectMenu() int {
+	fmt.Println("Меню работы с аккаунтом")
+	fmt.Println(" 1. Создать аккаунт;")
+	fmt.Println(" 2. Найти аккаунт;")
+	fmt.Println(" 3. Удалить аккаунт;")
+	fmt.Println(" 4. Выход")
+	var choise int
+	fmt.Scan(&choise)
+	return choise
+}
+
+func findAccount() {
+
+}
+
+func deleteAccount() {
+
 }

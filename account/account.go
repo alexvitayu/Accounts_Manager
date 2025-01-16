@@ -1,7 +1,6 @@
 package account
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand/v2"
@@ -31,14 +30,6 @@ func (acc *Account) OutputInfo() {
 	fmt.Println(*acc)
 }
 
-func (acc *Account) ToBytes() ([]byte, error) {
-	file, err := json.Marshal(acc)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
-}
-
 // method struct
 func (acc *Account) generatePassword(n int) {
 	res := make([]rune, n)
@@ -48,7 +39,7 @@ func (acc *Account) generatePassword(n int) {
 	acc.Password = string(res)
 }
 
-// comosition struct
+// constructor struct
 func NewMyAccount(urlString, login, password string) (*Account, error) {
 	if login == "" {
 		return nil, errors.New("INVALID_LOGIN")

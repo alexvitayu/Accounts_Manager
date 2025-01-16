@@ -1,1 +1,19 @@
-{"url":"https://aks.com","login":"askaks","password":"oS6Jk8zpzleU","createdAt":"2025-01-07T19:46:49.832869696+03:00","updatedAt":"2025-01-07T19:46:49.832873049+03:00"}
+{
+ "accounts": [
+  {
+   "url": "https://aks.com",
+   "login": "allex",
+   "password": "12345678",
+   "createdAt": "2025-01-16T14:34:22.819003427+03:00",
+   "updatedAt": "2025-01-16T14:34:22.819003718+03:00"
+  },
+  {
+   "url": "https://yandex.ru",
+   "login": "qazxsw",
+   "password": "NnFrEdc4XLsS",
+   "createdAt": "2025-01-16T14:34:51.283945664+03:00",
+   "updatedAt": "2025-01-16T14:34:51.283945934+03:00"
+  }
+ ],
+ "updatedAt": "2025-01-16T14:34:51.284103996+03:00"
+}
