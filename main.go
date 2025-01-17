@@ -3,19 +3,23 @@ package main
 import (
 	"demo/password-1/account"
 	"fmt"
+
+	"github.com/fatih/color"
 )
 
 func main() {
+	myVault := account.NewVault()
+
 Menu:
 	for {
 		userChoise := selectMenu()
 		switch userChoise {
 		case 1:
-			createAccount()
+			createAccount(myVault)
 		case 2:
-			findAccount()
+			findAccount(myVault)
 		case 3:
-			deleteAccount()
+			deleteAccount(myVault)
 		default:
 			fmt.Println("вы действительно хотите выйти? y/n")
 			var ch string
@@ -28,7 +32,7 @@ Menu:
 
 }
 
-func createAccount() {
+func createAccount(myVault *account.Vault) {
 	url := addInfo("введите url")
 	login := addInfo("введите логин")
 	password := addInfo("введите пароль")
@@ -37,7 +41,6 @@ func createAccount() {
 		fmt.Println("неверный формат URL или логин")
 		return
 	}
-	myVault := account.NewVault()
 	myVault.AddAccount(*myAccount)
 }
 
@@ -59,10 +62,26 @@ func selectMenu() int {
 	return choise
 }
 
-func findAccount() {
-
+func findAccount(myVault *account.Vault) {
+	// URL
+	url := addInfo("введите url для поиска")
+	// Поиск
+	accounts := myVault.FindAccountByURL(url)
+	if len(accounts) == 0 {
+		color.Red("не найдено аккаунтов")
+	}
+	for _, account := range accounts {
+		account.OutputInfo()
+	}
+	// Вывод
 }
 
-func deleteAccount() {
-
+func deleteAccount(vault *account.Vault) {
+	url := addInfo("введите url аккаунта, который хотите удалить")
+	isDeleted := vault.DeleteAccountByUrl(url)
+	if isDeleted {
+		color.Green("аккаунт удалён")
+	} else {
+		color.Red("аккаунт не найден")
+	}
 }

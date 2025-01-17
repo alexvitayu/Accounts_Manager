@@ -2,7 +2,6 @@ package account
 
 import (
 	"errors"
-	"fmt"
 	"math/rand/v2"
 	"net/url"
 	"time"
@@ -26,8 +25,6 @@ func (acc *Account) OutputInfo() {
 	color.Cyan(acc.Url)
 	color.Blue(acc.Login)
 	color.Green(acc.Password)
-	fmt.Println(acc.Url, acc.Login, acc.Password, acc.CreatedAt, (*acc).UpdatedAt)
-	fmt.Println(*acc)
 }
 
 // method struct
