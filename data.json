@@ -3,17 +3,24 @@
   {
    "url": "https://aks.com",
    "login": "allex",
-   "password": "12345678",
-   "createdAt": "2025-01-16T14:34:22.819003427+03:00",
-   "updatedAt": "2025-01-16T14:34:22.819003718+03:00"
+   "password": "d0hkXACQHaWx",
+   "createdAt": "2025-01-24T23:05:41.219417314+03:00",
+   "updatedAt": "2025-01-24T23:05:41.219420596+03:00"
   },
   {
-   "url": "https://yandex.ru",
+   "url": "https://aks.by",
    "login": "qazxsw",
-   "password": "NnFrEdc4XLsS",
-   "createdAt": "2025-01-16T14:34:51.283945664+03:00",
-   "updatedAt": "2025-01-16T14:34:51.283945934+03:00"
+   "password": "uIWJ9LTPK!Me",
+   "createdAt": "2025-01-28T13:34:53.485302288+03:00",
+   "updatedAt": "2025-01-28T13:34:53.485302849+03:00"
+  },
+  {
+   "url": "https://aks.net",
+   "login": "qwedcxza",
+   "password": "JWGmZ9Dy4o32",
+   "createdAt": "2025-01-28T13:35:06.380735779+03:00",
+   "updatedAt": "2025-01-28T13:35:06.38073596+03:00"
   }
  ],
- "updatedAt": "2025-01-16T14:34:51.284103996+03:00"
+ "updatedAt": "2025-01-28T13:35:06.380739517+03:00"
 }

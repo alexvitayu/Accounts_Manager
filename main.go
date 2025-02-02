@@ -2,13 +2,15 @@ package main
 
 import (
 	"demo/password-1/account"
+	"demo/password-1/files"
 	"fmt"
 
 	"github.com/fatih/color"
 )
 
 func main() {
-	myVault := account.NewVault()
+	myVault := account.NewVault(files.NewJsonDb("data.json"))
+	//myVault := account.NewVault((cloud.NewCloudDb("https://yandex.ru")))
 
 Menu:
 	for {
@@ -32,7 +34,7 @@ Menu:
 
 }
 
-func createAccount(myVault *account.Vault) {
+func createAccount(myVault *account.VaultWithDb) {
 	url := addInfo("введите url")
 	login := addInfo("введите логин")
 	password := addInfo("введите пароль")
@@ -62,7 +64,7 @@ func selectMenu() int {
 	return choise
 }
 
-func findAccount(myVault *account.Vault) {
+func findAccount(myVault *account.VaultWithDb) {
 	// URL
 	url := addInfo("введите url для поиска")
 	// Поиск
@@ -76,7 +78,7 @@ func findAccount(myVault *account.Vault) {
 	// Вывод
 }
 
-func deleteAccount(vault *account.Vault) {
+func deleteAccount(vault *account.VaultWithDb) {
 	url := addInfo("введите url аккаунта, который хотите удалить")
 	isDeleted := vault.DeleteAccountByUrl(url)
 	if isDeleted {
