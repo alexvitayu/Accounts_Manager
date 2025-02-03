@@ -1,6 +1,7 @@
 package files
 
 import (
+	"demo/password-1/output"
 	"fmt"
 	"os"
 )
@@ -18,7 +19,7 @@ func NewJsonDb(name string) *JsonDb {
 func (db *JsonDb) Read() ([]byte, error) {
 	data, err := os.ReadFile(db.filename)
 	if err != nil {
-		fmt.Println(err)
+		output.OutputErrors(err)
 		return nil, err
 	}
 	return data, nil
@@ -27,12 +28,12 @@ func (db *JsonDb) Read() ([]byte, error) {
 func (db *JsonDb) Write(content []byte) {
 	file, err := os.Create(db.filename)
 	if err != nil {
-		fmt.Println(err)
+		output.OutputErrors(err)
 	}
 	defer file.Close()
 	_, err = file.Write(content)
 	if err != nil {
-		fmt.Println(err)
+		output.OutputErrors(err)
 		return
 	}
 	fmt.Println("Запись успешна")

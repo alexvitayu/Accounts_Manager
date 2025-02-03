@@ -3,6 +3,7 @@ package main
 import (
 	"demo/password-1/account"
 	"demo/password-1/files"
+	"demo/password-1/output"
 	"fmt"
 
 	"github.com/fatih/color"
@@ -40,7 +41,7 @@ func createAccount(myVault *account.VaultWithDb) {
 	password := addInfo("введите пароль")
 	myAccount, err := account.NewMyAccount(url, login, password)
 	if err != nil {
-		fmt.Println("неверный формат URL или логин")
+		output.OutputErrors(err)
 		return
 	}
 	myVault.AddAccount(*myAccount)
@@ -65,17 +66,14 @@ func selectMenu() int {
 }
 
 func findAccount(myVault *account.VaultWithDb) {
-	// URL
 	url := addInfo("введите url для поиска")
-	// Поиск
 	accounts := myVault.FindAccountByURL(url)
 	if len(accounts) == 0 {
-		color.Red("не найдено аккаунтов")
+		output.OutputErrors("Аккаунтов не найдено")
 	}
 	for _, account := range accounts {
 		account.OutputInfo()
 	}
-	// Вывод
 }
 
 func deleteAccount(vault *account.VaultWithDb) {

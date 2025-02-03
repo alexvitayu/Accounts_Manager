@@ -1,11 +1,10 @@
 package account
 
 import (
+	"demo/password-1/output"
 	"encoding/json"
 	"strings"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 type ByteReader interface {
@@ -45,7 +44,7 @@ func NewVault(db Db) *VaultWithDb {
 	var vault Vault
 	err = json.Unmarshal(file, &vault)
 	if err != nil {
-		color.Red("не удалось разобрать файл data.json")
+		output.OutputErrors("не удалось разобрать файл")
 		return &VaultWithDb{
 			Vault: Vault{
 				Accounts:  []Account{},
@@ -92,6 +91,7 @@ func (vault *VaultWithDb) DeleteAccountByUrl(url string) bool {
 func (vault *Vault) ToBytes() ([]byte, error) {
 	file, err := json.MarshalIndent(vault, "", " ")
 	if err != nil {
+		output.OutputErrors("не удалось преобразовать")
 		return nil, err
 	}
 	return file, nil
@@ -101,7 +101,7 @@ func (vault *VaultWithDb) save() {
 	vault.UpdatedAt = time.Now()
 	data, err := vault.Vault.ToBytes()
 	if err != nil {
-		color.Red("не удалось преобразовать")
+		output.OutputErrors("не удалось преобразовать")
 	}
 	vault.db.Write(data)
 }
