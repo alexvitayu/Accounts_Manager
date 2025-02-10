@@ -2,8 +2,9 @@ package files
 
 import (
 	"demo/password-1/output"
-	"fmt"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 type JsonDb struct {
@@ -36,5 +37,5 @@ func (db *JsonDb) Write(content []byte) {
 		output.OutputErrors(err)
 		return
 	}
-	fmt.Println("Запись успешна")
+	color.Green("Запись успешна")
 }
