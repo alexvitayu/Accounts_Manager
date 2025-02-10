@@ -14,20 +14,13 @@ func main() {
 
 Menu:
 	for {
-		choise := promptData[string]([]string{
-			"_Менеджер аккаунтов_",
-			"1 Создать аккаунт",
-			"2 Найти аккаунт",
-			"3 Удалить аккаунт",
-			"4 Выход",
-			"Выберите вариант",
-		})
+		choise := getMenu()
 		switch choise {
-		case "1":
+		case 1:
 			createAccount(myVault)
-		case "2":
+		case 2:
 			findAccount(myVault)
-		case "3":
+		case 3:
 			deleteAccount(myVault)
 		default:
 			fmt.Println("Хотите выйти? y/n")
@@ -41,9 +34,9 @@ Menu:
 }
 
 func createAccount(vault *account.VaultWithDb) {
-	url := promptData[string]([]string{"введите url"})
-	login := promptData[string]([]string{"введите login"})
-	password := promptData[string]([]string{"введите password"})
+	url := addInfo("введите url")
+	login := addInfo("введите логин")
+	password := addInfo("введите пароль")
 	myAccount, err := account.NewMyAccount(url, login, password)
 	if err != nil {
 		output.OutputErrors(err)
@@ -52,21 +45,27 @@ func createAccount(vault *account.VaultWithDb) {
 	vault.AddAccount(*myAccount)
 }
 
-func promptData[T any](data []string) string {
-	for i, str := range data {
-		if i == len(data)-1 {
-			fmt.Printf("%v: ", str)
-		} else {
-			fmt.Println(str)
-		}
-	}
-	var choise string
-	fmt.Scanln(&choise)
+func addInfo(data string) string {
+	fmt.Print(data, ":")
+	var info string
+	fmt.Scanln(&info)
+	return info
+}
+
+func getMenu() int {
+	fmt.Println("_Менеджер аккаунтов_")
+	fmt.Println("Выберите вариант:")
+	fmt.Println("1 Создать аккаунт:")
+	fmt.Println("2 Найти аккаунт:")
+	fmt.Println("3 Удалить аккаунт:")
+	fmt.Println("4 Выход:")
+	var choise int
+	fmt.Scan(&choise)
 	return choise
 }
 
 func findAccount(vault *account.VaultWithDb) {
-	url := promptData[string]([]string{"введите url для поиска аккаунта"})
+	url := addInfo("Введите url для поиска аккаунта:")
 	accounts := vault.FindAccountByUrl(url)
 	for _, account := range accounts {
 		account.OutputInfo()
@@ -77,7 +76,7 @@ func findAccount(vault *account.VaultWithDb) {
 }
 
 func deleteAccount(vault *account.VaultWithDb) {
-	url := promptData[string]([]string{"введите url для поиска аккаунта"})
+	url := addInfo("Введите url для поиска аккаунта:")
 	isDeleted := vault.DeleteAccountByUrl(url)
 	if isDeleted {
 		color.Green("Аккаунт удалён")
