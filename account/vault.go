@@ -1,20 +1,29 @@
 package account
 
 import (
-	"demo/password-1/output"
 	"encoding/json"
+	"errors"
+	"revision/part-1/output"
 	"strings"
 	"time"
 )
 
-type Db interface {
+type ByteReader interface {
 	Read() ([]byte, error)
+}
+
+type ByteWriter interface {
 	Write([]byte)
 }
 
+type Db interface {
+	ByteReader
+	ByteWriter
+}
+
 type Vault struct {
-	Accounts  []Account
-	UpdatedAt time.Time
+	Accounts  []AccountWithTimeStamps `json:"MyAccounts:"`
+	UpdatedAt time.Time               `json:"UpdatedAt"`
 }
 
 type VaultWithDb struct {
@@ -22,23 +31,24 @@ type VaultWithDb struct {
 	db Db
 }
 
-func NewVault(db Db) *VaultWithDb {
-	data, err := db.Read()
+func NewMyVault(db Db) *VaultWithDb {
+	file, err := db.Read()
 	if err != nil {
 		return &VaultWithDb{
 			Vault: Vault{
-				Accounts:  []Account{},
+				Accounts:  []AccountWithTimeStamps{},
 				UpdatedAt: time.Now(),
 			},
 			db: db,
 		}
 	}
 	var myVault Vault
-	err = json.Unmarshal(data, &myVault)
+	err = json.Unmarshal(file, &myVault)
 	if err != nil {
+		output.OutputErrorsByTypes("не удалось преобразовать из json")
 		return &VaultWithDb{
 			Vault: Vault{
-				Accounts:  []Account{},
+				Accounts:  []AccountWithTimeStamps{},
 				UpdatedAt: time.Now(),
 			},
 			db: db,
@@ -50,20 +60,27 @@ func NewVault(db Db) *VaultWithDb {
 	}
 }
 
-func (vault *VaultWithDb) AddAccount(acc Account) {
+func (vault *VaultWithDb) AddAccount(acc AccountWithTimeStamps) error {
+	for _, account := range vault.Accounts {
+		isMatched := strings.Contains(account.Url, acc.Url)
+		if isMatched {
+			return errors.New("такой аккаунт уже существует")
+		}
+	}
 	vault.Accounts = append(vault.Accounts, acc)
-	vault.save()
+	vault.toBytesAndSave()
+	return nil
 }
 
-func (vault *VaultWithDb) FindAccountByUrl(url string) []Account {
-	var accounts []Account
+func (vault *VaultWithDb) FindAccountByUrl(url string) *[]AccountWithTimeStamps {
+	var accounts []AccountWithTimeStamps
 	for _, account := range vault.Accounts {
 		isMatched := strings.Contains(account.Url, url)
 		if isMatched {
 			accounts = append(accounts, account)
 		}
 	}
-	return accounts
+	return &accounts
 }
 
 func (vault *VaultWithDb) DeleteAccountByUrl(url string) bool {
@@ -74,25 +91,33 @@ func (vault *VaultWithDb) DeleteAccountByUrl(url string) bool {
 			vault.Accounts = append(vault.Accounts[:index], vault.Accounts[index+1:]...)
 			isDeleted = true
 		}
-		vault.save()
 	}
+	vault.toBytesAndSave()
 	return isDeleted
 }
 
-func (vault *Vault) ToBytes() ([]byte, error) {
+/*func (vault *Vault) ToBytes() ([]byte, error) {
 	data, err := json.MarshalIndent(vault, "", "")
 	if err != nil {
-		output.OutputErrors("не удалось преобразовать в json")
-		return nil, err
+		return nil, errors.New("не удалось преобразовать в json")
 	}
 	return data, nil
-}
+}*/
 
-func (vault *VaultWithDb) save() {
+/*func (vault *VaultWithDb) save() {
 	vault.UpdatedAt = time.Now()
-	data, err := vault.Vault.ToBytes()
+	data, err := vault.ToBytes()
 	if err != nil {
-		output.OutputErrors("не удалось преобразовать в json")
+		output.OutputErrorHack(err)
+	}
+	vault.db.Write(data)
+}*/
+
+func (vault *VaultWithDb) toBytesAndSave() {
+	data, err := json.MarshalIndent(vault, "", "")
+	if err != nil {
+		output.OutputErrorHack("не удалось преобразовать в json")
+		return
 	}
 	vault.db.Write(data)
 }

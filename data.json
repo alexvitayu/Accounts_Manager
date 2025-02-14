@@ -1,0 +1,23 @@
+{
+"MyAccounts:": [
+{
+"url": "https://yandex.ru",
+"ThisAccountLogin": "asdf",
+"CreatedAt": "2025-02-14T22:05:40.54414005+03:00",
+"UpdatedAt": "2025-02-14T22:05:40.544143473+03:00"
+},
+{
+"url": "https://boberkurwa.pl",
+"ThisAccountLogin": "asd",
+"CreatedAt": "2025-02-14T22:13:03.835657538+03:00",
+"UpdatedAt": "2025-02-14T22:13:03.835660961+03:00"
+},
+{
+"url": "https://aks.com",
+"ThisAccountLogin": "asd",
+"CreatedAt": "2025-02-14T22:15:07.159328917+03:00",
+"UpdatedAt": "2025-02-14T22:15:07.159332689+03:00"
+}
+],
+"UpdatedAt": "2025-02-14T22:04:52.8229849+03:00"
+}

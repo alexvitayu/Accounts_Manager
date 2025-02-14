@@ -4,16 +4,16 @@ type CloudDb struct {
 	url string
 }
 
-func NewCloudDb(url string) *CloudDb {
+func NewcloudDb(url string) *CloudDb {
 	return &CloudDb{
 		url: url,
 	}
 }
 
-func Read() ([]byte, error) {
+func (db *CloudDb) Read() ([]byte, error) {
 	return []byte{}, nil
 }
 
-func Write([]byte) {
+func (db *CloudDb) Write([]byte) {
 
 }
