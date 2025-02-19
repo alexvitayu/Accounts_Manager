@@ -6,6 +6,7 @@ import (
 	"revision/part-1/files"
 	"revision/part-1/output"
 	"revision/part-1/reverse"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -47,6 +48,16 @@ import (
 // hack in generic restrictions
 // generic struct
 // input generic exercise
+// Advanced functions - map intead of switch-case
+// transfer of functions
+// anonimous functions & searching by login & delete the duplicated code
+// dynamic number of arguments
+
+var variantMenu = map[string]func(*account.VaultWithDb){
+	"1": createAccount,
+	"2": findAccount,
+	"3": deleteAccount,
+}
 
 func main() {
 
@@ -72,7 +83,12 @@ Menu:
 			"4. Выход",
 			"Выберите вариант",
 		})
-		switch choise {
+		menuSelect := variantMenu[choise]
+		if menuSelect == nil {
+			break Menu
+		}
+		menuSelect(myVault)
+		/*switch choise {
 		case "1":
 			createAccount(myVault)
 		case "2":
@@ -86,7 +102,7 @@ Menu:
 			if ch == "y" {
 				break Menu
 			}
-		}
+		}*/
 	}
 
 }
@@ -124,10 +140,17 @@ func promptData[T any](data []T) string {
 
 func findAccount(vault *account.VaultWithDb) {
 	url := promptData([]string{"введите url для поиска аккаунта"})
-	accounts := vault.FindAccountByUrl(url)
+	accounts := vault.FindAccounts(url, finder)
+	if len(*accounts) == 0 {
+		output.OutputErrorHack("Аккаунтов не найдено")
+	}
 	for _, account := range *accounts {
 		account.OutputAccount()
 	}
+}
+
+func finder(str string, acc account.AccountWithTimeStamps) bool {
+	return strings.Contains(acc.Url, str)
 }
 
 func deleteAccount(vault *account.VaultWithDb) {

@@ -72,10 +72,10 @@ func (vault *VaultWithDb) AddAccount(acc AccountWithTimeStamps) error {
 	return nil
 }
 
-func (vault *VaultWithDb) FindAccountByUrl(url string) *[]AccountWithTimeStamps {
+func (vault *VaultWithDb) FindAccounts(strName string, finder func(str string, acc AccountWithTimeStamps) bool) *[]AccountWithTimeStamps {
 	var accounts []AccountWithTimeStamps
 	for _, account := range vault.Accounts {
-		isMatched := strings.Contains(account.Url, url)
+		isMatched := finder(strName, account)
 		if isMatched {
 			accounts = append(accounts, account)
 		}
