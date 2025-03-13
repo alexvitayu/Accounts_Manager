@@ -40,5 +40,19 @@ func (enc *Encryptor) Encrypt(plainStr []byte) []byte {
 }
 
 func (enc *Encryptor) Decrypt(encryptedStr []byte) []byte {
-	return []byte{}
+	block, err := aes.NewCipher([]byte(enc.Key))
+	if err != nil {
+		panic(err.Error())
+	}
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		panic(err.Error())
+	}
+	nonceSize := aesGCM.NonceSize()
+	nonce, cipherText := encryptedStr[:nonceSize], encryptedStr[nonceSize:]
+	plainText, err := aesGCM.Open(nil, nonce, cipherText, nil)
+	if err != nil {
+		panic(err.Error())
+	}
+	return plainText
 }
