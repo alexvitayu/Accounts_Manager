@@ -39,6 +39,7 @@ func main() {
 
 Menu:
 	for {
+		color.Yellow("Найдено %d аккаунтов", len(myVault.Accounts))
 		variant := promptData(menuVariants...)
 		menuFunc := menu[variant]
 		if menuFunc == nil {
