@@ -2,12 +2,14 @@ package main
 
 import (
 	"demo/password-1/account"
+	"demo/password-1/encryptor"
 	"demo/password-1/files"
 	"demo/password-1/output"
 	"fmt"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 )
 
 var menu = map[string]func(*account.VaultWithDb){
@@ -17,22 +19,28 @@ var menu = map[string]func(*account.VaultWithDb){
 	"4": deleteAccount,
 }
 
-func main() {
+var menuVariants = []string{
+	" 1. Создать аккаунт;",
+	" 2. Найти аккаунт по url;",
+	" 3. Найти аккаунт по login;",
+	" 4. Удалить аккаунт;",
+	" 5. Выход",
+	"выберите вариант",
+}
 
-	myVault := account.NewVault(files.NewJsonDb("data.json"))
+func main() {
+	fmt.Println("_Меню работы с аккаунтом_")
+	err := godotenv.Load()
+	if err != nil {
+		output.OutputErrors("не удалось найти env-файл")
+	}
+	myVault := account.NewVault(files.NewJsonDb("data.vault"), *encryptor.NewEncryptor())
 	//myVault := account.NewVault((cloud.NewCloudDb("https://yandex.ru")))
 
 Menu:
 	for {
-		variant := promptData(
-			"_Меню работы с аккаунтом_",
-			" 1. Создать аккаунт;",
-			" 2. Найти аккаунт по url;",
-			" 3. Найти аккаунт по login;",
-			" 4. Удалить аккаунт;",
-			" 5. Выход",
-			"выберите вариант",
-		)
+		color.Yellow("Найдено %d аккаунтов", len(myVault.Accounts))
+		variant := promptData(menuVariants...)
 		menuFunc := menu[variant]
 		if menuFunc == nil {
 			break Menu
@@ -72,7 +80,7 @@ func createAccount(myVault *account.VaultWithDb) {
 
 // функция принимает slice любого типа
 // выводит строкой каждый элемент, а последний - Printf добавляя :
-func promptData(prompt ...any) string {
+func promptData(prompt ...string) string {
 	for i, line := range prompt {
 		if i == len(prompt)-1 {
 			fmt.Printf("%v:", line)

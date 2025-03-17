@@ -1,4 +1,4 @@
 data.json
 password-1
-
-
+/.env*
+/*.vault
