@@ -3,7 +3,7 @@ package account
 import (
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"net/url"
 	"time"
 
@@ -12,28 +12,32 @@ import (
 
 var myLetters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!")
 
-// Description struct and create instance
-// transfer struct
-// apply pointers
-// rune struct
-// generate password
-// method struct
-// mutation struct
-// constructor struct
-// validation of the data
-// transfer of the generation
-// composition struct
-
 type Account struct {
 	Url      string `json:"url"`
-	Login    string `json:"ThisAccountLogin"`
-	password string
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 type AccountWithTimeStamps struct {
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 	Account
-	CreatedAt time.Time `json:"CreatedAt"`
-	UpdatedAt time.Time
+}
+
+func (acc *AccountWithTimeStamps) OutputInfo() {
+	color.Green(acc.Url)
+	color.Green(acc.Login)
+	color.Green(acc.Password)
+	fmt.Println(acc.CreatedAt, acc.UpdatedAt)
+
+}
+
+func (acc *AccountWithTimeStamps) generatePassword(n int) {
+	pas := make([]rune, n)
+	for i := range pas {
+		pas[i] = myLetters[rand.IntN(len(myLetters))]
+	}
+	acc.Account.Password = string(pas)
 }
 
 func NewMyAccountWithTimeStamps(urlString, login, password string) (*AccountWithTimeStamps, error) {
@@ -41,54 +45,39 @@ func NewMyAccountWithTimeStamps(urlString, login, password string) (*AccountWith
 	if err != nil {
 		return nil, errors.New("INVALID_URL")
 	}
-	if len(login) == 0 {
+	if login == "" {
 		return nil, errors.New("INVALID_LOGIN")
 	}
 	myAccount := &AccountWithTimeStamps{
 		Account: Account{
 			Url:      urlString,
 			Login:    login,
-			password: password,
+			Password: password,
 		},
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	if len(password) == 0 {
+	if password == "" {
 		myAccount.generatePassword(8)
 	}
 	return myAccount, nil
 }
 
-/*func NewMyAccount(urlString, login, password string) (*Account, error) {
+/*func NewMyAccount(urlString, login, password string) (*account, error) {
 	_, err := url.ParseRequestURI(urlString)
 	if err != nil {
 		return nil, errors.New("INVALID_URL")
 	}
-	if len(login) == 0 {
+	if login == "" {
 		return nil, errors.New("INVALID_LOGIN")
 	}
-	myAccount := &Account{
-		Url:      urlString,
-		Login:    login,
+	myAccount := &account{
+		url:      urlString,
+		login:    login,
 		password: password,
 	}
-	if len(password) == 0 {
+	if password == "" {
 		myAccount.generatePassword(8)
 	}
 	return myAccount, nil
 }*/
-
-func (acc *AccountWithTimeStamps) OutputAccount() {
-	color.Yellow(acc.Url)
-	color.Yellow(acc.Login)
-	color.Yellow(acc.password)
-	fmt.Println(acc.CreatedAt, acc.UpdatedAt)
-}
-
-func (acc *Account) generatePassword(n int) {
-	pass := make([]rune, n)
-	for index := range pass {
-		pass[index] = myLetters[rand.Intn(len(myLetters))]
-	}
-	acc.password = string(pass)
-}

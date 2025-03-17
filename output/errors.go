@@ -2,23 +2,23 @@ package output
 
 import "github.com/fatih/color"
 
-func OutputErrorsBySwitchCase(value any) {
-	switch f := value.(type) {
-	case int:
-		color.Red("Код ошибки:", f)
+func OutputErrors(value any) {
+	switch n := value.(type) {
 	case string:
-		color.Red(f)
+		color.Red(n)
+	case int:
+		color.Red("Код ошибки: %d", n)
 	case error:
-		color.Red(f.Error())
+		color.Red(n.Error())
 	default:
-		color.Red("unknown error type")
+		color.Red("неизвестный тип ошибки")
 	}
 }
 
-func OutputErrorsByTypes(value any) {
+func OutputErrorsNew(value any) {
 	intValue, ok := value.(int)
 	if ok {
-		color.Red("Код ошибки:", intValue)
+		color.Red("Код ошибки: %d", intValue)
 		return
 	}
 	strValue, ok := value.(string)
@@ -31,14 +31,13 @@ func OutputErrorsByTypes(value any) {
 		color.Red(errValue.Error())
 		return
 	}
-	color.Red("unknown error type")
-
+	color.Red("неизвестный тип ошибки")
 }
 
-func OutputErrorHack[T any](value T) {
+func OutputErrorsHack[T any](value T) {
 	intValue, ok := any(value).(int)
 	if ok {
-		color.Red("Код ошибки:", intValue)
+		color.Red("Код ошибки: %d", intValue)
 		return
 	}
 	strValue, ok := any(value).(string)
@@ -51,6 +50,6 @@ func OutputErrorHack[T any](value T) {
 		color.Red(errValue.Error())
 		return
 	}
-	color.Red("unknown error type")
+	color.Red("неизвестный тип ошибки")
 
 }

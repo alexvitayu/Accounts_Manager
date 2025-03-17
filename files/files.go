@@ -2,40 +2,39 @@ package files
 
 import (
 	"os"
-	"revision/part-1/output"
 
 	"github.com/fatih/color"
 )
 
 type JsonDb struct {
-	namefield string
+	filename string
 }
 
-func NewJsondb(name string) *JsonDb {
+func NewJsonDb(name string) *JsonDb {
 	return &JsonDb{
-		namefield: name,
+		filename: name,
 	}
 }
 
 func (db *JsonDb) Read() ([]byte, error) {
-	data, err := os.ReadFile(db.namefield)
+	data, err := os.ReadFile(db.filename)
 	if err != nil {
-		output.OutputErrorHack("не удалось прочитать файл")
+		color.Red("не удалось прочитать файл")
 		return nil, err
 	}
 	return data, nil
 }
-
 func (db *JsonDb) Write(content []byte) {
-	file, err := os.Create(db.namefield)
+	file, err := os.Create(db.filename)
 	if err != nil {
-		output.OutputErrorsBySwitchCase("не удалось создать файл")
-	}
-	defer file.Close()
-	_, err = file.Write(content)
-	if err != nil {
-		output.OutputErrorsByTypes("не удалось записать в файл")
+		color.Red("не удалось создать файл")
 		return
 	}
-	color.Green("Запись успешна!")
+	_, err = file.Write(content)
+	defer file.Close()
+	if err != nil {
+		color.Red("не удалось записать файл")
+		return
+	}
+	color.Green("Запись успешна")
 }

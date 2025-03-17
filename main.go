@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"revision/part-1/account"
+	"revision/part-1/encryptor"
 	"revision/part-1/files"
-	"revision/part-1/output"
-	"revision/part-1/reverse"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 )
 
 // Reverse array | mutation of the origin object by using pointers | generic for different types
@@ -54,124 +54,154 @@ import (
 // searching by login exercise
 // dynamic number of arguments
 // closure
+// get env and reading of .env-file
+// ENCRYPTER struct and methods Encrypt and Decrypt
+// Application of encrypter
 
-var menu = map[string]func(*account.VaultWithDb){
-	"1": createAccount,
-	"2": findAccountByUrl,
-	"3": findAccountByLogin,
-	"4": deleteAccount,
+var variants = []string{
+	"_Меню работы с аккаунтом_",
+	"1 создать аккаунт,",
+	"2 найти аккаунт по url,",
+	"3 найти аккаунт по логин,",
+	"4 удалить аккаунт,",
+	"5 выход",
+	"Выберите вариант",
 }
 
 func main() {
+	myMenu := map[string]func(*account.VaultWithDb){
+		"1": createAccount,
+		"2": findAccountByUrl,
+		"3": findAccountByLogin,
+		"4": deleteAccount,
+	}
 
-	// Reverse array | mutation of the origin object by using pointers | generic for different types
+	godotenv.Load()
 
-	r := []int{1, 2, 3, 4, 5, 6}
-	//r := []string{"a", "b", "c", "d", "e", "f"}
-	//r := []float64{0.5, 0.6, 0.7, 0.8, 0.9, 1.0}
-	reverse.OutputReverse(&r)
-	rev := reverse.ReverseArray(&r)
-	reverse.OutputReverse(rev)
-
-	myVault := account.NewMyVault(files.NewJsondb("data.json"))
-	//myVault := account.NewMyVault(cloud.NewcloudDb("https://yandex.ru"))
+	myVault := account.NewMyVault(files.NewJsonDb("data.vault"), encryptor.NewEncryptor())
+	//myVault := account.NewMyVault(cloud.NewCloudDb("https://yandex.ru"))
 
 Menu:
 	for {
-		choise := promptData(
-			"_Меню работы с аккаунтами_",
-			"1. Создать аккаунт",
-			"2. Найти аккаунт по Url",
-			"3. Найти аккаунт по Login",
-			"4. Удалить аккаунт",
-			"5. Выход",
-			"Выберите вариант",
-		)
-		selectMenu := menu[choise]
-		if selectMenu == nil {
-			break Menu
-		}
-		selectMenu(myVault)
-		/*switch choise {
-		case "1":
-			createAccount(myVault)
-		case "2":
-			findAccount(myVault)
-		case "3":
-			deleteAccount(myVault)
-		default:
-			fmt.Println("Вы хотите выйти?, y/n")
+		color.Yellow("Всего %d аккаунтов", len(myVault.Accounts))
+		variant := promptData(variants...)
+
+		menu := myMenu[variant]
+		if menu == nil {
+			fmt.Println("Хотите выйти? y/n")
 			var ch string
 			fmt.Scan(&ch)
 			if ch == "y" {
 				break Menu
 			}
-		}*/
+		}
+		menu(myVault)
 	}
-
 }
+
+/*
+   Menu:
+
+   	switch variant {
+   	case "1":
+   		createAccount(myVault)
+   	case "2":
+   		findAccount(myVault)
+   	case "3":
+   		deleteAccount(myVault)
+   	case "4":
+   		fmt.Println("Хотите выйти? y/n")
+   		var ch string
+   		fmt.Scan(&ch)
+   		if ch == "y" {
+   			break Menu
+   		}
+   	}
+*/
 
 func createAccount(vault *account.VaultWithDb) {
-	// Work with Accounts&Vault
 	url := promptData("Введите url")
 	login := promptData("Введите login")
-	password := promptData([]string{"Введите password"})
+	password := promptData("Введите password")
+
 	myAccount, err := account.NewMyAccountWithTimeStamps(url, login, password)
 	if err != nil {
-		output.OutputErrorHack[error](err)
+		fmt.Println(err)
 		return
 	}
-	err = vault.AddAccount(*myAccount)
-	if err != nil {
-		output.OutputErrorHack(err)
-		return
-	}
-	vault.AddAccount(*myAccount)
+	vault.AddAccount(myAccount)
+
 }
 
-func promptData(data ...any) string {
-	for index, value := range data {
-		if index == len(data)-1 {
-			fmt.Printf("%v: ", value)
-		} else {
-			fmt.Println(value)
-		}
-	}
+/*func inputData(inp string) string {
+	fmt.Print(inp, ": ")
 	var input string
 	fmt.Scanln(&input)
 	return input
+}*/
+
+func promptData(data ...string) string {
+	for i, str := range data {
+		if i == len(data)-1 {
+			fmt.Print(str, ": ")
+		} else {
+			fmt.Println(str)
+		}
+	}
+	var choise string
+	fmt.Scanln(&choise)
+	return choise
 }
 
+/*func selectMenu() int {
+	var ch int
+	fmt.Println("_Меню работы с аккаунтом_")
+	fmt.Println("1 создать аккаунт,")
+	fmt.Println("2 найти аккаунт,")
+	fmt.Println("3 удалить аккаунт,")
+	fmt.Println("4 выход")
+	fmt.Scan(&ch)
+	return ch
+}*/
+
 func findAccountByUrl(vault *account.VaultWithDb) {
-	url := promptData("введите url для поиска аккаунта")
-	accounts := vault.FindAccounts(url, func(str string, acc account.AccountWithTimeStamps) bool {
-		return strings.Contains(acc.Url, str)
+	url := promptData("Введите url")
+	accounts := vault.FindAccount(url, func(url string, acc account.AccountWithTimeStamps) bool {
+		return strings.Contains(acc.Url, url)
 	})
 	outPut(accounts)
 }
+
 func findAccountByLogin(vault *account.VaultWithDb) {
-	login := promptData("введите login для поиска аккаунта")
-	accounts := vault.FindAccounts(login, func(str string, acc account.AccountWithTimeStamps) bool {
-		return strings.Contains(acc.Login, str)
+	login := promptData("Введите login")
+	accounts := vault.FindAccount(login, func(login string, acc account.AccountWithTimeStamps) bool {
+		return strings.Contains(acc.Login, login)
 	})
 	outPut(accounts)
 }
 
 func outPut(accounts *[]account.AccountWithTimeStamps) {
-	if len(*accounts) == 0 {
-		output.OutputErrorHack("No found accounts")
+	if len(*accounts) > 0 {
+		color.Green("Найдено %d аккуаунтов", len(*accounts))
+	} else {
+		color.Red("не найдено аккаунтов")
 	}
-	for _, account := range *accounts {
-		account.OutputAccount()
+	for _, acc := range *accounts {
+		acc.OutputInfo()
 	}
+
 }
 
+/*func checker(url string, acc account.AccountWithTimeStamps) bool {
+	return strings.Contains(acc.Url, url)
+}*/
+
 func deleteAccount(vault *account.VaultWithDb) {
-	url := promptData("введите url чтобы удалить аккаунт")
-	isDeleted := vault.DeleteAccountByUrl(url)
-	if isDeleted {
-		color.Green("Аккаунт успешно удалён")
+	url := promptData("Введите url")
+	isCompared := vault.DeleteAccountByUrl(url)
+	if isCompared {
+		color.Green("Аккаунт удалён")
 	} else {
-		color.Red("Аккаунты не найдены")
+		color.Red("не найдено аккаунтов")
 	}
 }

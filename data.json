@@ -1,23 +1,26 @@
 {
-"MyAccounts:": [
+"Accounts": [
 {
+"createdAt": "2025-03-16T18:09:52.578906456+03:00",
+"updatedAt": "2025-03-16T18:09:52.578911765+03:00",
 "url": "https://yandex.ru",
-"ThisAccountLogin": "asdf",
-"CreatedAt": "2025-02-14T22:05:40.54414005+03:00",
-"UpdatedAt": "2025-02-14T22:05:40.544143473+03:00"
+"login": "asdf",
+"password": "HTnqLlzw"
 },
 {
-"url": "https://boberkurwa.pl",
-"ThisAccountLogin": "asd",
-"CreatedAt": "2025-02-14T22:13:03.835657538+03:00",
-"UpdatedAt": "2025-02-14T22:13:03.835660961+03:00"
+"createdAt": "2025-03-16T18:10:07.315022522+03:00",
+"updatedAt": "2025-03-16T18:10:07.315026712+03:00",
+"url": "https://bober.pl",
+"login": "qwer",
+"password": "ARwshvAC"
 },
 {
+"createdAt": "2025-03-16T18:57:53.565877475+03:00",
+"updatedAt": "2025-03-16T18:57:53.565881386+03:00",
 "url": "https://aks.com",
-"ThisAccountLogin": "asd",
-"CreatedAt": "2025-02-14T22:15:07.159328917+03:00",
-"UpdatedAt": "2025-02-14T22:15:07.159332689+03:00"
+"login": "allex",
+"password": "hxp6ODoI"
 }
 ],
-"UpdatedAt": "2025-02-14T22:04:52.8229849+03:00"
+"UpdatedAt": "2025-03-17T11:55:17.085577521+03:00"
 }
